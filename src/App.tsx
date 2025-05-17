@@ -7,7 +7,7 @@ function App() {
         <h1>¡Universidad Católica de Pereira !</h1>
         <p>Listado de integrantes - Proceso de Desarrollo de Software I</p>
         <p>Integrantes:</p>
-        Hola
+        <p>Hola</p>
       </div>
     </>
   );
