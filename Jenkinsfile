@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'bun run test --reporter=junit > vitest-report.xml || true'
+                        sh 'bun run test --reporter=junit > vitest-report.xml'
                         junit 'vitest-report.xml'
                     } catch (err) {
                         echo "Pruebas en Chrome fallaron: ${err}"
