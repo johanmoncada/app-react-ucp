@@ -3,6 +3,7 @@ pipeline {
     tools {
         nodejs 'Node_24'  // Configurado en Global Tools
     }
+
     stages {
         // Etapa 1: Checkout
         stage('Checkout') {
@@ -29,12 +30,11 @@ pipeline {
         // Etapa 3: Pruebas Paralelizadas
         stage('Pruebas en Paralelo') {
             parallel {
-                // Pruebas en Chrome
                 stage('Pruebas Chrome') {
                     steps {
                         script {
                             try {
-                                sh 'bun test -- --browser=chrome --watchAll=false --ci --reporters=jest-junit'
+                                sh 'bun test > junit-chrome.xml'
                                 junit 'junit-chrome.xml'
                             } catch (err) {
                                 echo "Pruebas en Chrome fallaron: ${err}"
@@ -43,12 +43,12 @@ pipeline {
                         }
                     }
                 }
-                // Pruebas en Firefox
+
                 stage('Pruebas Firefox') {
                     steps {
                         script {
                             try {
-                                sh 'bun test -- --browser=firefox --watchAll=false --ci --reporters=jest-junit'
+                                sh 'bun test > junit-firefox.xml'
                                 junit 'junit-firefox.xml'
                             } catch (err) {
                                 echo "Pruebas en Firefox fallaron: ${err}"
@@ -66,7 +66,7 @@ pipeline {
             steps {
                 script {
                     // Crear carpeta "prod" y copiar build
-                    sh 'mkdir -p prod && cp -r build/* prod/'
+                    sh 'mkdir -p prod && cp -r dist/* prod/'
                     echo "¡Deploy simulado exitoso! Archivos copiados a /prod"
                 }
             }
