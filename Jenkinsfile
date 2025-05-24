@@ -44,6 +44,17 @@ pipeline {
     }
 
     post {
+        failure {
+            emailext(
+            subject: "Fallo en ${env.JOB_NAME}",
+            body: """
+                    <p>Build: ${env.BUILD_URL}</p>
+                    <p>Resultado: ${currentBuild.result}</p>
+            """,
+            to: 'johan.moncadat@gmail.com',
+            mimeType: 'text/html'
+            )
+        }
         always {
             script {
                 echo "Build finalizado con estado: ${currentBuild.result}"
@@ -63,7 +74,12 @@ pipeline {
             )
             
             // Limpiar workspace
-            cleanWs()
+            try {
+                cleanWs()
+            } catch (err) {
+                echo "cleanWs no disponible: ${err}"
+                sh 'rm -rf *'
+            }
         }
     }
 }
