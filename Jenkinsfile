@@ -34,7 +34,7 @@ pipeline {
                     steps {
                         script {
                             try {
-                                sh 'bun test > junit-chrome.xml'
+                                sh 'bun test --browser=chrome --watchAll=false --ci --reporters=jest-junit --outputFile=junit-chrome.xml'
                                 junit 'junit-chrome.xml'
                             } catch (err) {
                                 echo "Pruebas en Chrome fallaron: ${err}"
@@ -48,7 +48,7 @@ pipeline {
                     steps {
                         script {
                             try {
-                                sh 'bun test > junit-firefox.xml'
+                                sh 'bun test --browser=firefox --watchAll=false --ci --reporters=jest-junit --outputFile=junit-firefox.xml'
                                 junit 'junit-firefox.xml'
                             } catch (err) {
                                 echo "Pruebas en Firefox fallaron: ${err}"
