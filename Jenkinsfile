@@ -42,18 +42,13 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
-            // Publicar reportes HTML (opcional)
-            publishHTML target: [
-                allowMissing: true,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'prod',
-                reportFiles: 'index.html',
-                reportName: 'Demo Deploy'
-            ]
+            script {
+                echo "Build finalizado con estado: ${currentBuild.result}"
+                echo "Archivos generados disponibles en el directorio: prod"
+            }
             
             // Notificación por email ante fallos
             emailext (
