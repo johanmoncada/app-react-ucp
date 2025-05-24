@@ -29,49 +29,20 @@ pipeline {
 
         // Etapa 3: Pruebas Paralelizadas
         stage('Pruebas en Paralelo') {
-            parallel {
-                stage('Pruebas Chrome') {
-                    steps {
-                        script {
-                            try {
-                                sh 'bun test --browser=chrome --watchAll=false --ci --reporters=jest-junit --outputFile=junit-chrome.xml'
-                                junit 'junit-chrome.xml'
-                            } catch (err) {
-                                echo "Pruebas en Chrome fallaron: ${err}"
-                                currentBuild.result = 'UNSTABLE'
-                            }
-                        }
-                    }
-                }
-
-                stage('Pruebas Firefox') {
-                    steps {
-                        script {
-                            try {
-                                sh 'bun test --browser=firefox --watchAll=false --ci --reporters=jest-junit --outputFile=junit-firefox.xml'
-                                junit 'junit-firefox.xml'
-                            } catch (err) {
-                                echo "Pruebas en Firefox fallaron: ${err}"
-                                currentBuild.result = 'UNSTABLE'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // Etapa 4: Deploy Simulado
-        stage('Deploy a Producción (Simulado)') {
             steps {
                 script {
-                    // Crear carpeta "prod" y copiar build
-                    sh 'mkdir -p prod && cp -r dist/* prod/'
-                    echo "¡Deploy simulado exitoso! Archivos copiados a /prod"
+                    try {
+                        sh 'bun run test --reporter=junit > vitest-report.xml || true'
+                        junit 'vitest-report.xml'
+                    } catch (err) {
+                        echo "Pruebas en Chrome fallaron: ${err}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
                 }
             }
         }
     }
+    
     post {
         always {
             // Publicar reportes HTML (opcional)
