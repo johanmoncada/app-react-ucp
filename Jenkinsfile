@@ -74,12 +74,7 @@ pipeline {
             )
             
             // Limpiar workspace
-            try {
-                cleanWs()
-            } catch (err) {
-                echo "cleanWs no disponible: ${err}"
-                sh 'rm -rf *'
-            }
+            cleanWs()
         }
     }
 }
