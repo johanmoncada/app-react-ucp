@@ -7,16 +7,25 @@ pipeline {
         // Etapa 1: Checkout
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/johanmoncada/app-react-ucp.git'
+                git branch: 'main', url: 'https://github.com/johanmoncada/app-react-ucp.git', credentialsId: 'github-token'
             }
         }
 
+        stage('Instalar Bun') {
+            steps {
+                sh '''
+                curl -fsSL https://bun.sh/install | bash
+                echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $HOME/.bashrc
+                export PATH="$HOME/.bun/bin:$PATH"
+                '''
+            }
+        }
 
         // Etapa 2: Build
         stage('Build') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
+                sh 'bun install'
+                sh 'bun run build'
             }
         }
 
@@ -29,7 +38,7 @@ pipeline {
                     steps {
                         script {
                             try {
-                                sh 'npm test -- --browser=chrome --watchAll=false --ci --reporters=jest-junit'
+                                sh 'bun test -- --browser=chrome --watchAll=false --ci --reporters=jest-junit'
                                 junit 'junit-chrome.xml'
                             } catch (err) {
                                 echo "Pruebas en Chrome fallaron: ${err}"
@@ -43,7 +52,7 @@ pipeline {
                     steps {
                         script {
                             try {
-                                sh 'npm test -- --browser=firefox --watchAll=false --ci --reporters=jest-junit'
+                                sh 'bun test -- --browser=firefox --watchAll=false --ci --reporters=jest-junit'
                                 junit 'junit-firefox.xml'
                             } catch (err) {
                                 echo "Pruebas en Firefox fallaron: ${err}"
