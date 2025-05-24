@@ -13,11 +13,7 @@ pipeline {
 
         stage('Instalar Bun') {
             steps {
-                sh '''
-                curl -fsSL https://bun.sh/install | bash
-                echo 'export PATH="$HOME/.bun/bin:$PATH"' >> $HOME/.bashrc
-                export PATH="$HOME/.bun/bin:$PATH"
-                '''
+                sh 'npm install -g bun'
             }
         }
 
